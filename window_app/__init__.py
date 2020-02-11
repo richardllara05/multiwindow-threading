@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 import sys
-import Utilities
+from utilities import Calculator
 
 
 class CustomWindow(QtWidgets.QWidget):
@@ -24,7 +24,7 @@ class CustomWindow(QtWidgets.QWidget):
         # Slot is the function to execute
         # Signal is the component action
 
-        self.obj = Utilities.Calculator()
+        self.obj = Calculator()
         self.btn.clicked.connect(self.obj.display)
         self.btn.move(10, 70)
 
