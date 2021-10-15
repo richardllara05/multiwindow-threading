@@ -10,11 +10,7 @@
 ## Upcoming Updates:
 * Calculator Functionality
 * More Utilities
-* Automatic window close when swapping
-* Limit to how many times current window can be opened
+* Thread support for each utility
 
 ### Notes:
-Swapping can be done by using seperate show() methods; however, 
-the program crashes on running multiple exec_ methods from
-QApplication class. You should only have 1 exec_ method because
-it runs the main function.
+Great project for learning more about threads!
