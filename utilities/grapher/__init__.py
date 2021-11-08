@@ -1,8 +1,14 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import ( 
+    Qt,
+    QObject,
+    pyqtSignal
+)
 
 
 class Grapher(QtWidgets.QWidget):
+    terminated = pyqtSignal()
+    
     def __init__(self):
         super().__init__()
         self.setGeometry(1920 // 2, 1080 // 2, 800, 800) 
@@ -35,3 +41,14 @@ class Grapher(QtWidgets.QWidget):
 
     def display(self):
         self.show()
+
+    def closeEvent(self, event):
+        self.terminated.emit()
+
+class GrapherWorker(QObject):
+    finished = pyqtSignal()
+    
+    def run(self):
+        self.grapher = Grapher()
+        self.grapher.display()
+        self.grapher.terminated.connect(lambda: self.finished.emit())

@@ -1,21 +1,25 @@
+
 from PyQt5 import QtWidgets
-from PyQt5.QtCore import Qt
-
-
+from PyQt5.QtCore import ( 
+    Qt, 
+    QObject, 
+    pyqtSignal
+)
 class Calculator(QtWidgets.QWidget):
+    terminated = pyqtSignal()
+    
     def __init__(self):
         super().__init__()
         self.setGeometry(1920 // 2, 1080 // 2, 200, 200) 
         self.setupUI()
+        self.display_value = pyqtSignal(str)
 
     def setupUI(self):
         self.setWindowTitle('Calculator')
 
-        display = QtWidgets.QTextEdit()
-        display.setReadOnly(True)
-
-        self.layout = QtWidgets.QGridLayout()
-        self.layout.addWidget(display, 0, 0, 1, 5, Qt.AlignmentFlag.AlignCenter)
+        self.layout = QtWidgets.QGridLayout(self)
+        # self.display  = QtWidgets.QLabel()
+        # self.layout.addWidget(self.display, 0, 0, 1, 5, Qt.AlignmentFlag.AlignCenter)
 
         symbols = [
             ['%', 'CE', 'C', 'DEL'],
@@ -31,11 +35,28 @@ class Calculator(QtWidgets.QWidget):
 
         for row in range(ROW_LEN):
             for col in range(COL_LEN):
-                self.layout.addWidget(QtWidgets.QPushButton(symbols[row][col]), row + 1, col + 1)
+                button = QtWidgets.QPushButton(symbols[row][col])
+                button.clicked.connect(self.display_text)
+                self.layout.addWidget(button, row + 1, col + 1)
             
+    
 
-        
-        self.setLayout(self.layout)
 
     def display(self):
         self.show()
+
+    def display_text(self):
+        btn_pressed = self.sender()
+        btn_text = btn_pressed.text()
+        # self.display.setText(btn_text)
+    
+    def closeEvent(self, event):
+        self.terminated.emit()
+
+class CalculatorWorker(QObject):
+    finished = pyqtSignal()
+    
+    def run(self):
+        self.calculator = Calculator()
+        self.calculator.display()
+        self.calculator.terminated.connect(lambda: self.finished.emit())
